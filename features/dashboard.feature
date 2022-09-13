@@ -3,6 +3,16 @@ Feature: Different dashboard validation scenarios
 Background:
 Given I login
 
+@verify-different-panels
+Scenario: Verify different panels display on the dahboard page
+When I am on the Dashboard page
+Then I see the Top Provider Activity panel
+And I see the Missed Visits By Provider panel
+And I see the Unmatched Claims By Error panel
+And I see the Late Visits By Provider panel
+And I see the Claims Adjudication By Provider panel
+And I see the Submitted Claims By Reason Code panel
+
 @DCHT-81
 Scenario: Verify functionality of Top Provider Activity dashboard
 When I click on the preview graph in the Top Provider Activity panel

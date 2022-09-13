@@ -5,14 +5,14 @@ const c = {
     graphPreview: '//div[@data-componentid="Top_Provider_Activity"]//*[name()="g"][@class="highcharts-series-group"]',
     startDate: '//input[contains(@id, "start_date")]',
     endDate: '//input[contains(@id, "end_date")]',
-    providerList: '//ul[@class="jr-mSelectlist jr"]',
+    providerList: '//ul[contains(@class, "Selectlist")]//li',
     applyBtn: '//span[contains(@class, "mat-button-wrapper") and contains(text(), "Apply")]',
     resetBtn: '//span[contains(@class, "mat-button-wrapper") and contains(text(), "Reset")]',
     exportBtn: '//button//span[contains(text(),"Export")]',     
     pdfBtn: '//button[contains(text(), "PDF")]',
     excelBtn: '//button[contains(text(), "Excel")]',
     xlsxBtn: '//button[contains(text(), "XLSX")]',
-    graph: '//*[name()="g"][contains(@style,"cursor")]',//'//*[name()="g"][@class="highcharts-series-group"]',    
+    graph: '//*[name()="g"][contains(@style,"cursor")]',  
     activityPage: '//span[contains(text(), "TOP PROVIDER ACTIVITY")]',
     activityDataPage: '//span[contains(text(), "TOP PROVIDER ACTIVITY DATA PAGE")]',
 }
@@ -45,14 +45,16 @@ module.exports = {
     },
 
     async selectDatesAndProvider() {
-        let d = new Date();
+        let d = new Date();       
         let startDate = new Date();
         let endDate = new Date(); 
         startDate.setDate(d.getDate() - 35);
-        endDate.setDate(d.getDate() - 10);        
+        endDate.setDate(d.getDate() - 20);        
         I.fillField(c.startDate, formatDate(startDate));
         I.fillField(c.endDate, formatDate(endDate)); 
+        I.click(locate(c.providerList).first()); // select first provider
         I.click(c.applyBtn);
+        I.wait(10);
         let newGraph = await getGraphIfRendered();
         I.wait(3);
         console.log(newGraph == initialGraph ? 'New graph and initial graph match' : 'New graph is different from initial graph');
