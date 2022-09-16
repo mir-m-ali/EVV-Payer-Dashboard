@@ -3,5 +3,6 @@ Feature: Login feature
 Background:
 Given I login
 
-Scenario: Launch the payer dashboard site and login
+@login-logout
+Scenario: Launch the payer dashboard site, login, and then logout
 Then I log out

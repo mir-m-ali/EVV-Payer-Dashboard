@@ -1,20 +1,7 @@
 const { I } = inject();
 
-const c = {
-    waitTime: 120,
-    graphPreview: '//div[@data-componentid="Top_Provider_Activity"]//*[name()="g"][@class="highcharts-series-group"]',
-    startDate: '//input[contains(@id, "start_date")]',
-    endDate: '//input[contains(@id, "end_date")]',
-    providerList: '//ul[contains(@class, "Selectlist")]//li',
-    applyBtn: '//span[contains(@class, "mat-button-wrapper") and contains(text(), "Apply")]',
-    resetBtn: '//span[contains(@class, "mat-button-wrapper") and contains(text(), "Reset")]',
-    exportBtn: '//button//span[contains(text(),"Export")]',     
-    pdfBtn: '//button[contains(text(), "PDF")]',
-    excelBtn: '//button[contains(text(), "Excel")]',
-    xlsxBtn: '//button[contains(text(), "XLSX")]',
-    graph: '//*[name()="g"][contains(@style,"cursor")]',  
-    activityPage: '//span[contains(text(), "TOP PROVIDER ACTIVITY")]',
-    activityDataPage: '//span[contains(text(), "TOP PROVIDER ACTIVITY DATA PAGE")]',
+const c = {    
+    graphPreview: '//div[@data-componentid="Top_Provider_Activity"]//*[name()="g"][@class="highcharts-series-group"]',    
 }
 
 let initialGraph = '';
@@ -56,16 +43,14 @@ module.exports = {
         I.click(c.applyBtn);
         I.wait(10);
         let newGraph = await getGraphIfRendered();
-        I.wait(3);
-        console.log(newGraph == initialGraph ? 'New graph and initial graph match' : 'New graph is different from initial graph');
-        I.wait(20);
+        I.wait(1);      
     },
 
-    async reset() {
+    reset() {
         I.click(c.resetBtn);
-        I.waitForVisible(c.graph, c.waitTime);
-        let graphAfterReset = await I.grabHTMLFrom(c.graph);
-        console.log(initialGraph == graphAfterReset ? 'contents match' : 'contents do not match');
+        I.wait(5);   
+        I.click(c.applyBtn);
+        I.wait(5);  
     },
 
     clickOnGraph() {
