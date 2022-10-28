@@ -1,15 +1,21 @@
 const { I } = inject();
 
-const USERNAME = 'mali';
-const PASSWORD = 'Password!123';
 const waitTime = 120;
 
 module.exports = {
 
     login() {
         I.amOnPage('/');
-        I.fillField('//input[@id="username"]', USERNAME);
-        I.fillField('//input[@id="password"]', PASSWORD);
+        /*
+        I.executeScript(() => {
+            let path = '//input[@id="username"]';
+            let username = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;;
+            username.style.backgroundColor = 'yellow';
+        });     
+        */  
+        I.wait(2);
+        I.fillField('//input[@id="username"]', process.env.USERNAME);
+        I.fillField('//input[@id="password"]', process.env.PASSWORD);
         I.click('//button[@id="kc-login"]');        
         I.waitForVisible('//span[contains(text(),"Dashboard")]', waitTime);  
     },

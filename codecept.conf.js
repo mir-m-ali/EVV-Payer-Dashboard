@@ -12,7 +12,7 @@ exports.config = {
   output: './output',
   helpers: {
     WebDriver: {
-      url: 'https://evv-payer-dashboard.uat.4tellus.net/', //'https://www.google.com',
+      url: 'https://evv-payer-dashboard.uat.4tellus.net/',
       browser: 'chrome',
       windowSize: 'maximize',
       desiredCapabilities: {
