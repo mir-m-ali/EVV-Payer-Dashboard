@@ -4,20 +4,22 @@ const waitTime = 120;
 
 module.exports = {
 
-    login() {
+    debug() {
         I.amOnPage('/');
-        /*
-        I.executeScript(() => {
-            let path = '//input[@id="username"]';
-            let username = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;;
-            username.style.backgroundColor = 'yellow';
-        });     
-        */  
+        I.fillField('//input[@id="username"]', 'mali');
+        I.fillField('//input[@id="password"]', 'Password!123');
+    },
+
+    login() {
+        I.amOnPage('/');        
         I.wait(2);
         I.fillField('//input[@id="username"]', process.env.USERNAME);
         I.fillField('//input[@id="password"]', process.env.PASSWORD);
         I.click('//button[@id="kc-login"]');        
         I.waitForVisible('//span[contains(text(),"Dashboard")]', waitTime);  
+        I.executeScript(() => {            
+            window.findByXpath = (path) => { return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; }
+        });
     },
 
     logout() {
