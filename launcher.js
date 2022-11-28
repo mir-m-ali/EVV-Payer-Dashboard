@@ -36,28 +36,19 @@ if (isRunOnBstack) {
 }
 
 const tags = args[5].split('=')[1].replace(/"/, '');
-const opts = isRunOnBstack ?
+const cmdArgs = isRunOnBstack ?
     ['codeceptjs', 'run', '-c', configFile, '--grep', `${tags}`, '--plugins', 'allure']
     //['codeceptjs', 'run-multiple', 'bstack', '-c', configFile, '--grep', `${tag}`, '--plugins', 'allure']
     : ['codeceptjs', 'run', '-c', configFile, '--grep', `${tags}`, '--plugins', 'allure'];
 
 
+//console.log(process.stdout);
 //console.log('running codeceptjs with options: ', opts);
+//const testLauncher = spawn('npx.cmd', cmdArgs, {stdio: 'inherit'});
 
-const testLauncher = spawn('npx.cmd', opts);
-testLauncher.stdout.on('data', data => console.log(data.toString('ascii')));
-testLauncher.stderr.on('data', data => console.log(data.toString('ascii')));
-testLauncher.on('error', error => console.log(data.toString('ascii')));
+const testLauncher = spawn('npx.cmd', cmdArgs);
+//testLauncher.stdout.setEncoding('ascii');
+testLauncher.stdout.on('data', data => process.stdout.write(data));
+testLauncher.stderr.setEncoding('ascii');
+testLauncher.stderr.on('data', data => process.stderr.write(data));
 testLauncher.on('close', code => console.log(`Test run complete. Exit code ${code}`));
-
-/*
-const npx = exec(`npx codeceptjs run --steps --grep ${tags}`, (error, stdout, stderr) => {
-    if (error) {
-        console.log(error.stack);
-    }
-    console.log(stdout);
-    console.log('Err: ' + stderr);
-});
-
-npx.on('exit', (code) => { console.log(`Exiting with code ${code}`); });
-*/

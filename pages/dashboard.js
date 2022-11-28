@@ -23,6 +23,9 @@ const c = {
     excelBtn: '//button[contains(text(), "Excel")]',
     xlsxBtn: '//button[contains(text(), "XLSX")]',
     graph: '//*[name()="g"][contains(@style,"cursor")]',  
+    firstBarInTileBarGraph: '//div[@data-componentid="$tile"]//*[name()="g"][contains(@class,"highcharts-tracker")]//*[name()="rect"][position()=1]',
+    firstBarInGraph: '//*[name()="g"][contains(@class,"highcharts-tracker")]//*[name()="rect"][position()=1]',
+    lastWedgeInTilePieChart: '//div[@data-componentid="$tile"]//*[name()="g"][contains(@class,"highcharts-tracker")]//*[name()="path"][position()=last()]',
     lastWedgeOfPieChart: '//*[name()="g"][contains(@class,"highcharts-tracker")]//*[name()="path"][position()=last()]',
     highlightedWedgeOfPieChart: '//*[name()="path"][contains(@class,"highcharts-point-hover")]',
     activityPage: '//span[contains(text(), "$activityPage")]',
@@ -32,6 +35,17 @@ const c = {
     previewGraphFirstLegend: '//div[@data-componentid="$tileName"]//*[name()="g"][contains(@class,"highcharts-legend-item")][position()=1]',
     previewGraphLastLegend: '//div[@data-componentid="$tileName"]//*[name()="g"][contains(@class,"highcharts-legend-item")][position()=last()]',
 }
+
+const tiles = {
+    'Top Provider Activity': 'Top_Provider_Activity',
+    'Missed Visits By Provider': 'Missed_Visits_By_Provider',
+    'Unmatched Claims By Error': 'Unmatched_Claims_By_Reason',
+    'Late Visits By Provider': 'Late_Visits_By_Provider',
+    'Claims Adjudication By Provider': 'Claims_Adjudication_By_Provider',
+    'Submitted Claims By Reason Code': 'Submitted_Claims_By_Reason_Code',
+};
+
+const barGraphs = ['Missed Visits By Provider', 'Late Visits By Provider'];
 
 function formatDate(date) {
     let m = date.getMonth() + 1;    
@@ -53,46 +67,11 @@ function clickOnGraph(baseGraph, isBarGraph) {
     I.click(chart);
 }
 
-function clickOnWedgeOfPieChart() {
-    // this needs to be done when a wedge of a pie chart is very thin and webdriverio fails to correctly click on the desired wedge
-    // for now using the last wedge of the pie chart
-    I.moveCursorTo(c.lastWedgeOfPieChart);
-    I.click(c.highlightedWedgeOfPieChart);
-    I.moveCursorTo(c.lastWedgeOfPieChart);
-}
 
-
-async function clickBarChartPreview(baseGraph, num) {
-    // issue with codeceptjs not being able to click a small rect in an svg. Point of click is usually intercepted by another non-clickable element
-    // for now determine the bar with the largest height and click on that   
-    let heights = await I.grabAttributeFromAll(baseGraph, 'height');
-    console.log(heights);
-    let desiredBarIndex = 1;
-    let greatestHeight = 0;
-    for (let i = 0; i < heights.length; i++) {
-        let h = heights[i];
-        if (greatestHeight < h) {
-            greatestHeight = h;
-            desiredBarIndex = i+1;
-            console.log('desired bar is ' + desiredBarIndex);
-        }
-    }
-    I.click(baseGraph + '//*[name()="rect"][position()=' + desiredBarIndex + ']');
-}
-   
-
-function getElement(xPath) {
-    return document.evaluate(xPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-}
+ 
 
 module.exports = {
-
-    _startDebug() {
-        let v = 'this was set in codeceptjs';
-        I.executeScript(function(v) { alert('hello\n' + v); })
-        pause();
-    },
-
+    
      clickOnDashboardButton() {
         I.waitForVisible(c.dashboardBtn, c.waitTime);
         I.click(c.dashboardBtn);
@@ -102,11 +81,63 @@ module.exports = {
         I.waitForVisible(c.tileItem.replace('$tileName', tileName), c.waitTime);
     },
 
-    async clickOnPreviewGraphFor(tileName) {   
+    clickItemInBarGraph(item) {  
+    
+        if (!item) item = c.firstBarInGraph;
+        
+        I.waitForVisible(item, c.waitTime);
+    
+        // this is needed if the bar in the graph is too small and webdriverio fails to correctly click on the desired bar
+        I.executeScript((bar) => {
+            let minHeight = 30;
+            let _bar = findByXpath(bar);
+            let height = parseFloat(_bar.getAttribute('height'));
+            let y = parseFloat(_bar.getAttribute('y'));
+            let del = minHeight - height;
+            if (!del) return;
+            _bar.setAttribute('height', height + del);
+            _bar.setAttribute('y', y - del);
+        }, item);
+        
+        I.click(item);
+    },
+
+    clickPieChartWedge(wedge) {    
+
+        if (!wedge) wedge = c.lastWedgeOfPieChart;
+
+        I.waitForVisible(wedge, c.waitTime);    
+
+        // this needs to be done when a wedge of a pie chart is very thin and webdriverio fails to correctly click on the desired wedge
+        // for now using the last wedge of the pie chart
+        I.executeScript((wedge) => {
+            let minArcSize = 30;
+            let _wedge = findByXpath(wedge);
+            let indexOfLastWedge = _wedge.point.series.data.length - 1;
+            let arcSize = parseFloat(_wedge.point.series.data[indexOfLastWedge].y);
+            if (arcSize >= minArcSize) return;
+            _wedge.point.series.data[indexOfLastWedge].update(minArcSize);
+        }, wedge);
+                
+        I.moveCursorTo(wedge);
+        I.click(wedge);
+        //I.click(c.highlightedWedgeOfPieChart);
+        //I.moveCursorTo(wedge);
+    },
+
+    clickPreviewGraph(tileName) { 
+        let isBarGraph = barGraphs.indexOf(tileName) > -1;
+        if (isBarGraph)
+            this.clickItemInBarGraph(c.firstBarInTileBarGraph.replace('$tile', tiles[tileName]));            
+        else
+            this.clickPieChartWedge(c.lastWedgeInTilePieChart.replace('$tile', tiles[tileName]));
+    },
+
+    clickOnPreviewGraphFor(tileName) {   
         let previewGraph = c.previewGraph.replace('$tileName', tileName);      
         I.waitForVisible(previewGraph, c.waitTime);
         if (isChartBarGraph(tileName)) {
-            let num = await I.grabNumberOfVisibleElements(previewGraph + '//*[name()="rect"]');
+            let num = I.grabNumberOfVisibleElements(previewGraph + '//*[name()="rect"]');
             clickBarChartPreview(previewGraph, num);
         }            
         else

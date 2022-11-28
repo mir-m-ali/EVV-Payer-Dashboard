@@ -1,9 +1,5 @@
 const p = require('../pages/dashboard');
 
-When('I test', () => {
-    p._startDebug();
-});
-
 When('I am on the Dashboard page', () => {
     p.clickOnDashboardButton();
 });
@@ -12,12 +8,14 @@ Then('I see the {string} tile', (title) => {
     p.verifyTileIsPresent(title);
 }); 
 
+When('I click the preview graph of tile {string}', (tileName) => { p.clickPreviewGraph(tileName); });
+
 When('I click on the preview pie chart in the {string} tile', (tileName) => {
     p.clickOnTilePreviewPieChart(tileName);
 });
 
-When('I click on the preview graph in the {string} tile', async (tileName) => {
-    await p.clickOnPreviewGraphFor(tileName);
+When('I click on the preview graph in the {string} tile', (tileName) => {
+    p.clickOnPreviewGraphFor(tileName);
 });
 
 Then('I see the title {string} in maximized tile and the data in a graph', (title) => {
@@ -71,11 +69,13 @@ Then('I select a valid date range and click Apply to see the graph', () => {
     p.apply();
 });
 
+Then('I click any bar on the graph to see data for that item', () => p.clickItemInBarGraph());
+
 Then('I click on the first bar of the chart in {string} to see the detailed data of the provider', (activityDataPage) => {
     p.clickOnGraphToSee(activityDataPage);
 });
 
-Then('I see the provider filter is set to the provider that was clicked on the bar chart', () => {
+Then('I see the {string} filter set to the {string} clicked in the graph', () => {
     // currently not possible to do any test. Only visual verification
 });
 
