@@ -14,5 +14,8 @@
     "@wdio/selenium-standalone-service": "^7.23.0",
     "codeceptjs": "^3.3.5",
     "webdriverio": "^7.23.0"
+  },
+  "dependencies": {
+    "selenium": "^2.20.0"
   }
 }

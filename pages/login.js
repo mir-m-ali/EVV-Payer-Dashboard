@@ -6,13 +6,6 @@ module.exports = {
 
     login() {
         I.amOnPage('/');
-        /*
-        I.executeScript(() => {
-            let path = '//input[@id="username"]';
-            let username = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;;
-            username.style.backgroundColor = 'yellow';
-        });     
-        */  
         I.wait(2);
         I.fillField('//input[@id="username"]', process.env.USERNAME);
         I.fillField('//input[@id="password"]', process.env.PASSWORD);
