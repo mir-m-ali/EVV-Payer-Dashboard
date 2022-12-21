@@ -9,7 +9,7 @@ let isRunOnBstack = args[2].split('=')[1] === 'bstack';
 let configFile = isRunOnBstack ? 'codecept.conf.bstack.js' : 'codecept.conf.js';
 let userArgPresent = !!args[3]?.startsWith('u');
 let passArgPresent = !!args[4]?.startsWith('p');
-let tagsArgPresent = !!args[5]?.startsWith('tags');
+let tagsArgPresent = !!args[5]?.startsWith('tag');
 let bstackUserArgPresent = !!process.env.BROWSERSTACK_USERNAME || !!args[6]?.startsWith('bstack_user'); 
 let bstackPasswordArgPresent = !!process.env.BROWSERSTACK_ACCESS_KEY || !!args[7]?.startsWith('bstack_pass');
 

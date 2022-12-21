@@ -16,6 +16,10 @@
     "webdriverio": "^7.23.0"
   },
   "dependencies": {
+    "chromedriver": "^104.0.0",
+    "dotenv": "^16.0.0",
+    "geckodriver": "^3.0.2",
+    "ms-chromium-edge-driver": "^0.5.1",
     "selenium": "^2.20.0"
   }
 }

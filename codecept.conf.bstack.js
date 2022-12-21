@@ -105,7 +105,7 @@ exports.config = {
   hooks: [],
   gherkin: {
     features: './features/**/*.feature',
-    steps: './step_definitions/*.js'
+    steps: './steps/*.js'
   },
   plugins: {
     autoLogin: {
