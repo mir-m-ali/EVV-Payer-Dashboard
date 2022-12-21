@@ -3,7 +3,8 @@ const { I } = inject();
 const c = {
     waitTime: 160,
     reportsButton: '//button[@ng-reflect-message="Reports"]',
-    reportMenuItem: '//button[@mattooltip="$reportName"]',
+    //reportMenuItem: '//button[@mattooltip="$reportName"]',
+    reportMenuItem: '//button[contains(., "$reportName")]',
     detailsOfReport: '//span[contains(text(), "$reportTitle")]',
     loadingMsg: '//div[contains(text(), "Loading")]',
     startDate: '//input[contains(@id, "start_date")]',
@@ -60,5 +61,19 @@ module.exports = {
 
     reset() {
         I.click(c.resetBtn);
+        I.wait(2);
     },
+
+    selectBalanceLessThanOrEqual(percentage) {
+        // this particular drop down is difficult...unable to grab the options directly via xpath
+        I.click('//div[@class="jr-mSingleselect-input-expander jr"]')
+        I.fillField('//div[contains(@class, "jr-mSingleselect-search jr")]//input', percentage);
+        I.wait(2);
+        I.pressKey('ArrowDown');
+        I.pressKey('Enter');
+    },
+
+    selectOneClaimStatus() {
+        I.click('(//ul[contains(@class, "Selectlist")])[1]//li[1]');         
+    }
 };

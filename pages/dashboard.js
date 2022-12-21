@@ -156,6 +156,7 @@ module.exports = {
     },
 
     selectDatesAndProvider() {
+        /*
         let d = new Date();       
         let startDate = new Date();
         let endDate = new Date(); 
@@ -168,8 +169,25 @@ module.exports = {
         I.click(c.datepickerCloseBtn);
         I.waitForInvisible(c.providerListDisabled, c.waitTime);
         I.wait(3);
+        */
+        this.selectStartAndEndDates();
         this.selectOneProvider();
         this.apply();
+    },
+
+    selectStartAndEndDates() {
+        let d = new Date();       
+        let startDate = new Date();
+        let endDate = new Date(); 
+        startDate.setDate(d.getDate() - 35);
+        endDate.setDate(d.getDate() - 20);        
+        I.fillField(c.startDate, formatDate(startDate));
+        I.click(c.datepickerCloseBtn);
+        I.waitForInvisible(c.providerListDisabled, c.waitTime);
+        I.fillField(c.endDate, formatDate(endDate)); 
+        I.click(c.datepickerCloseBtn);
+        I.waitForInvisible(c.providerListDisabled, c.waitTime);
+        I.wait(3);
     },
 
     selectProviderFilterButton(buttonTitle) {

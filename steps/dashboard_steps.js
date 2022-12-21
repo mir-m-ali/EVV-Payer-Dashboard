@@ -50,6 +50,10 @@ Then('I select the dates and error code and click Apply to see the data change',
     p.selectDatesAndProvider();
 }); 
 
+Then('I select a valid Start Date and End Date', () => {
+    p.selectStartAndEndDates();
+}); 
+
 
 Then('I click on Reset to clear the filters and click Apply to see the initial data', () => {
     p.reset();
@@ -62,6 +66,10 @@ Then('I click on the legend Late Visits', () => {
 
 Then('I click on the legend Variance', () => {
     p.clickLegendVariance();
+});
+
+Then('I click Apply', () => {
+    p.apply();
 });
 
 Then('I select a valid date range and click Apply to see the graph', () => {

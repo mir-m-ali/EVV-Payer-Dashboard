@@ -41,3 +41,10 @@ Then I see the title 'UNMATCHED CLAIMS BY ERROR' in maximized tile and the data 
 Then I search for a known 'error code' in the 'error code' list search box
 Then I see the 'error code' in the 'error code' list
 
+@DCHT-345
+Scenario: As a user, verify Date Range shows correct Global Error Code
+When I click the preview graph of tile 'Unmatched Claims By Error'
+Then I see the title 'UNMATCHED CLAIMS BY ERROR' in maximized tile and the data in a graph
+Then I select a valid Start Date and End Date
+Then I click Apply
+

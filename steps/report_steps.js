@@ -21,4 +21,12 @@ Then('I click the Reset button', () => {
     p.reset();
 });
 
+Then('I select 100% for Balance Less Than or Equal', () => {
+    p.selectBalanceLessThanOrEqual('100%');
+});
+
+Then('I select a claim status', () => {
+    p.selectOneClaimStatus();
+});
+
 

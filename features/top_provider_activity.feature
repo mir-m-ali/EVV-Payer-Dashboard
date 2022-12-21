@@ -17,9 +17,3 @@ Then I select the dates and provider and click Apply to see the data change
 Then I click on Reset to clear the filters and click Apply to see the initial data
 Then I click anywhere on the graph to see 'TOP PROVIDER ACTIVITY DATA PAGE'
 Then I click on Export to see PDF, Excel, XSLX export options
-
-
-
-
-
-

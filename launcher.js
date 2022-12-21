@@ -36,11 +36,14 @@ if (isRunOnBstack) {
 }
 
 const tags = args[5].split('=')[1].replace(/"/, '');
+
+/*
 const cmdArgs = isRunOnBstack ?
     ['codeceptjs', 'run', '-c', configFile, '--grep', `${tags}`, '--plugins', 'allure']
     //['codeceptjs', 'run-multiple', 'bstack', '-c', configFile, '--grep', `${tag}`, '--plugins', 'allure']
     : ['codeceptjs', 'run', '-c', configFile, '--grep', `${tags}`, '--plugins', 'allure'];
-
+*/
+const cmdArgs = ['codeceptjs', 'run', '-c', configFile, '--grep', `${tags}`, '--plugins', 'allure'];
 
 //console.log(process.stdout);
 //console.log('running codeceptjs with options: ', opts);
