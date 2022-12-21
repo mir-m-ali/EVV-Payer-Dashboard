@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const BROWSERSTACK_USERNAME = process.env.BROWSERSTACK_USERNAME.replace(/"/g, '').replace('-jenkins', '');
 const BROWSERSTACK_ACCESS_KEY = process.env.BROWSERSTACK_ACCESS_KEY.replace(/"/g, '');
-const BROWSERSTACK_BUILD_NAME = process.env.BROWSERSTACK_BUILD_NAME ? process.env.BROWSERSTACK_BUILD_NAME.replace(/"/g, '') : 'evv-dashboard-build';
+const BROWSERSTACK_BUILD_NAME = process.env.BROWSERSTACK_BUILD_NAME ? process.env.BROWSERSTACK_BUILD_NAME.replace(/"/g, '') : 'evv-payer-build';
 
 const BUILD_NAME = BROWSERSTACK_BUILD_NAME;
 
