@@ -30,12 +30,12 @@ Then('I click the provider filter button None to see all providers deselected', 
     p.selectProviderFilterButton('Deselect');
 });
 
-Then('I click on a single provider to see that provider selected', () => {
-    p.selectOneProvider();
-});
-
 Then('I click on the provider filter button Invert to see the provider selection is inverted', () => {
     p.selectProviderFilterButton('Invert');
+});
+
+Then('I click on a single provider to see that provider selected', () => {
+    p.selectOneProvider();
 });
 
 Then('I click Reset', () => {

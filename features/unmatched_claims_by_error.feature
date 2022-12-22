@@ -34,6 +34,15 @@ Then I see the title 'UNMATCHED CLAIMS BY ERROR' in maximized tile and the data 
 Then I select the dates and error code and click Apply to see the data change
 Then I click on Reset to clear the filters and click Apply to see the initial data
 
+@DCHT-159
+Scenario: Verify Reset button clears filters in the Umatched Claims By Error tile
+When I click the preview graph of tile 'Unmatched Claims By Error'
+Then I see the title 'UNMATCHED CLAIMS BY ERROR' in maximized tile and the data in a graph
+Then I select the dates and error code and click Apply to see the data change
+Then I click the provider filter button All to see all providers selected
+Then I click the provider filter button None to see all providers deselected
+Then I click on the provider filter button Invert to see the provider selection is inverted
+
 @DCHT-160
 Scenario: As a user, perform Error Code search
 When I click the preview graph of tile 'Unmatched Claims By Error'
