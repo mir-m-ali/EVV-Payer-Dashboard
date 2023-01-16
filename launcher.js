@@ -37,21 +37,31 @@ if (isRunOnBstack) {
 
 const tags = args[5].split('=')[1].replace(/"/, '');
 
-/*
-const cmdArgs = isRunOnBstack ?
-    ['codeceptjs', 'run', '-c', configFile, '--grep', `${tags}`, '--plugins', 'allure']
-    //['codeceptjs', 'run-multiple', 'bstack', '-c', configFile, '--grep', `${tag}`, '--plugins', 'allure']
-    : ['codeceptjs', 'run', '-c', configFile, '--grep', `${tags}`, '--plugins', 'allure'];
-*/
-const cmdArgs = ['codeceptjs', 'run', '-c', configFile, '--grep', `${tags}`, '--plugins', 'allure'];
+let netstatCmd = 'netstat -ano | findstr :4444';
+let taskkillCmd = 'taskkill /F /PID ';
 
-//console.log(process.stdout);
-//console.log('running codeceptjs with options: ', opts);
-//const testLauncher = spawn('npx.cmd', cmdArgs, {stdio: 'inherit'});
+// sometimes the process using port 4444 isn't killed after test completion - this takes of that
+exec(netstatCmd, (err, stdout, stderr) => {
+    if (err) {
+        //console.log(`Error: ${err}`);
+        console.log('port 4444 should be available to use.');
+        return;
+    }
+    stdout = stdout.trim();    
+    exec(taskkillCmd + stdout.split(' ').pop(), (err, stdout, stderr) => {
+        console.log('port 4444 should be available to use.');
+    });
+});
 
-const testLauncher = spawn('npx.cmd', cmdArgs);
-//testLauncher.stdout.setEncoding('ascii');
+
+const cmdArgs = ['codeceptjs', 'run', '--steps', '-c', configFile, '--grep', `${tags}`, '--plugins', 'allure'];
+const testLauncher = spawn('npx.cmd', cmdArgs, {stdio: 'inherit'});
+
+
+/* // the following three will be gone because of the stdio: 'inherit' option
 testLauncher.stdout.on('data', data => process.stdout.write(data));
 testLauncher.stderr.setEncoding('ascii');
 testLauncher.stderr.on('data', data => process.stderr.write(data));
-testLauncher.on('close', code => console.log(`Test run complete. Exit code ${code}`));
+*/
+
+//testLauncher.on('close', code => console.log(`Test run complete. Exit code ${code}`));

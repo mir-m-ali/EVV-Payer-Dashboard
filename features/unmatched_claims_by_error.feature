@@ -11,7 +11,7 @@ Then I see the title 'UNMATCHED CLAIMS BY ERROR' in maximized tile and the data 
 
 @DCHT-152 @DCHT-153
 Scenario: Verify Umatched Claims By Error tile is dynamic based on selection of legend
-When I click on a few legend items in the preview graph in the 'Unmatched_Claims_By_Reason' tile
+When I click on a few legend items in the preview graph in the 'Unmatched Claims By Error' tile
 Then I see the graph change as per the selection
 
 @DCHT-156
@@ -39,8 +39,8 @@ Scenario: Verify Reset button clears filters in the Umatched Claims By Error til
 When I click the preview graph of tile 'Unmatched Claims By Error'
 Then I see the title 'UNMATCHED CLAIMS BY ERROR' in maximized tile and the data in a graph
 Then I select the dates and error code and click Apply to see the data change
-Then I click the provider filter button All to see all providers selected
-Then I click the provider filter button None to see all providers deselected
+Then I click the filter button All to see all options selected
+Then I click the filter button None to see all options deselected
 Then I click on the provider filter button Invert to see the provider selection is inverted
 
 @DCHT-160

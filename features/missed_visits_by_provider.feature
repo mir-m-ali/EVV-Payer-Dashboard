@@ -9,8 +9,8 @@ Given I login
 Scenario: Verify functionality of Missed Visits By Provider tile
 When I click the preview graph of tile 'Missed Visits By Provider'
 Then I see the title 'MISSED VISITS BY PROVIDER' in maximized tile and the data in a graph
-Then I click the provider filter button All to see all providers selected
-Then I click the provider filter button None to see all providers deselected
+Then I click the filter button All to see all options selected
+Then I click the filter button None to see all options deselected
 Then I click on a single provider to see that provider selected
 Then I click on the provider filter button Invert to see the provider selection is inverted
 Then I click Reset

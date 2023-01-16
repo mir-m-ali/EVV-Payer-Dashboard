@@ -2,6 +2,7 @@ const { I } = inject();
 
 const c = {
     waitTime: 160,
+    controlsLabel: '//span[contains(text(), "Control")]',    
     barCharts: ['missed visits by provider', 'late visits by provider'], // hack for now...need to come up with something better
     dashboardBtn: '//button[contains(@mattooltip,"Payer Dashboard")]',
     tileItem: '//p[contains(text(), "$tileName")]',
@@ -13,7 +14,7 @@ const c = {
     applyBtn: '//span[contains(@class, "mat-button-wrapper") and contains(text(), "Apply")]',
     resetBtn: '//span[contains(@class, "mat-button-wrapper") and contains(text(), "Reset")]',
     zeroSelection: '//span[contains(text(), "Selected: 0")]',
-    providerFilterButton: '//li[contains(@title, "$buttonTitle")]',
+    filterButton: '//li[contains(@title, "$buttonTitle")]',
     providerListDisabled: '//div[contains(@class, "MultiSelect") and contains(@class, "Disabled")]',
     lastProvider: '//li[contains(@class, "Selectlist-item")][position()=last()]',
     searchProviderListInput: '//input[contains(@class,"Input-search")]',
@@ -30,10 +31,15 @@ const c = {
     highlightedWedgeOfPieChart: '//*[name()="path"][contains(@class,"highcharts-point-hover")]',
     activityPage: '//span[contains(text(), "$activityPage")]',
     activityDataPage: '//span[contains(text(), "$activityDataPage")]',
+    legendItem: '//*[name()="g"][contains(@class,"highcharts-legend-item")][position()=$position]',
     legendLateVisits: '//*[name()="g"][contains(@class,"highcharts-legend-item")][position()=1]',
     legendVariance: '//*[name()="g"][contains(@class,"highcharts-legend-item")][position()=2]',
     previewGraphFirstLegend: '//div[@data-componentid="$tileName"]//*[name()="g"][contains(@class,"highcharts-legend-item")][position()=1]',
     previewGraphLastLegend: '//div[@data-componentid="$tileName"]//*[name()="g"][contains(@class,"highcharts-legend-item")][position()=last()]',
+    columnName: '(//td[contains(@class,"interactive")]/span)[$index][contains(text(), "$text")]',
+    selectedItemInList: '(//div[contains(@class,"Scalablelist")])[$index]//li[contains(@class, "isSelected")]//a',
+    providerInReport: '(//td[contains(@class, "cel_provider")]/span)[1]',
+    reasonCodeInReport: '(//td[contains(@class, "cel_matching_display")]/span)[1]',
 }
 
 const tiles = {
@@ -67,6 +73,9 @@ function clickOnGraph(baseGraph, isBarGraph) {
     I.click(chart);
 }
 
+function textFromHtml(htmlText) {    
+    return !htmlText ? '' : htmlText.trim().replace(/<br\/?>|(&nbsp;)|(&amp;)/gi,'').replace(/\s{2,}/g, ' ');
+}
 
  
 
@@ -100,6 +109,8 @@ module.exports = {
         }, item);
         
         I.click(item);
+        I.moveCursorTo(c.controlsLabel);
+        this.waitForContentToLoad();
     },
 
     clickPieChartWedge(wedge) {    
@@ -121,8 +132,8 @@ module.exports = {
                 
         I.moveCursorTo(wedge);
         I.click(wedge);
-        //I.click(c.highlightedWedgeOfPieChart);
-        //I.moveCursorTo(wedge);
+        I.moveCursorTo(c.controlsLabel);
+        this.waitForContentToLoad();
     },
 
     clickPreviewGraph(tileName) { 
@@ -155,21 +166,7 @@ module.exports = {
         I.wait(1);
     },
 
-    selectDatesAndProvider() {
-        /*
-        let d = new Date();       
-        let startDate = new Date();
-        let endDate = new Date(); 
-        startDate.setDate(d.getDate() - 35);
-        endDate.setDate(d.getDate() - 20);        
-        I.fillField(c.startDate, formatDate(startDate));
-        I.click(c.datepickerCloseBtn);
-        I.waitForInvisible(c.providerListDisabled, c.waitTime);
-        I.fillField(c.endDate, formatDate(endDate)); 
-        I.click(c.datepickerCloseBtn);
-        I.waitForInvisible(c.providerListDisabled, c.waitTime);
-        I.wait(3);
-        */
+    selectDatesAndProvider() {      
         this.selectStartAndEndDates();
         this.selectOneProvider();
         this.apply();
@@ -181,22 +178,46 @@ module.exports = {
         let endDate = new Date(); 
         startDate.setDate(d.getDate() - 35);
         endDate.setDate(d.getDate() - 20);        
-        I.fillField(c.startDate, formatDate(startDate));
-        I.click(c.datepickerCloseBtn);
+        I.fillField(c.startDate, formatDate(startDate));        
         I.waitForInvisible(c.providerListDisabled, c.waitTime);
         I.fillField(c.endDate, formatDate(endDate)); 
-        I.click(c.datepickerCloseBtn);
+        I.click(c.controlsLabel);
         I.waitForInvisible(c.providerListDisabled, c.waitTime);
         I.wait(3);
     },
 
-    selectProviderFilterButton(buttonTitle) {
-        I.click(c.providerFilterButton.replace('$buttonTitle', buttonTitle));
+    setStartDate(date) {
+        if (date === 'today')  date = formatDate(new Date());
+        if (!date) {
+            date = new Date();        
+            date.setDate(date.getDate() - 35);
+            date = formatDate(date);
+        }        
+        I.fillField(c.startDate, date);
+        I.click(c.controlsLabel);
+    },
+
+    setEndDate(date) {
+        if (date === 'today')  date = formatDate(new Date());
+        if (!date) {
+            date = new Date();        
+            date.setDate(date.getDate() - 20);
+            date = formatDate(date);
+        }              
+        I.fillField(c.endDate, date);
+        I.click(c.controlsLabel);        
+        I.waitForInvisible(c.providerListDisabled, c.waitTime);
+        I.wait(3);
+    },
+
+    selectFilterButton(buttonTitle) {
+        I.click(c.filterButton.replace('$buttonTitle', buttonTitle));
         I.wait(3);
     },
 
     selectOneProvider(index) {
         index = !index ? 0 : index;
+        I.waitForInvisible(c.providerListDisabled, c.waitTime);        
         I.click(c.firstProvider);
         I.wait(2);
     },
@@ -216,20 +237,19 @@ module.exports = {
 
     apply() {
         I.click(c.applyBtn);
-        I.waitForInvisible(c.loadingMsg, c.waitTime);
-        I.wait(2);
+        this.waitForContentToLoad();        
     },
 
     clickLegendLateVisits() {
         I.waitForVisible(c.legendLateVisits, c.waitTime);
         I.click(c.legendLateVisits);
-        I.wait(3);
+        I.wait(2);
     },
 
     clickLegendVariance() {
         I.waitForVisible(c.legendVariance, c.waitTime);
         I.click(c.legendVariance);
-        I.wait(3);
+        I.wait(2);
     },
     
     // this is only for Late Visits By Provider...will have to make it dynamic
@@ -250,18 +270,65 @@ module.exports = {
 
     clickExportToSeeExportOptions() {
         I.click(c.exportBtn);
+        I.wait(3);
         I.waitForVisible(c.pdfBtn);
         I.waitForVisible(c.excelBtn);
         I.waitForVisible(c.xlsxBtn);
     },
 
     clickFirstAndLastLegend(tileName) {
+        tileName = tiles[tileName];
         let firstLegend = c.previewGraphFirstLegend.replace('$tileName', tileName);
         let lastLegend = c.previewGraphLastLegend.replace('$tileName', tileName);
         I.waitForVisible(firstLegend, c.waitTime);
         I.click(firstLegend);
         I.wait(2);
         I.click(lastLegend);        
+    },
+
+    clickEachLegendInSet(numberOfLegendsInSet) {
+        if (!numberOfLegendsInSet) numberOfLegendsInSet = 1;
+        for (let i = 1; i <= numberOfLegendsInSet; i++) {            
+            I.click(c.legendItem.replace('$position', i));
+            I.wait(2);
+        }
+    },
+
+    verifyColumn(colNumber, colName) {
+        colName = colName.split(' ')[0].trim();
+        I.click(c.columnName.replace('$index', colNumber).replace('$text', colName));
+    },
+
+    async verifySelectedItemInFilterMatchesThatInReport(filterType) {        
+        let locatorForTextInFilterList = undefined;   
+        let locatorForTextInReport = undefined;  
+        
+
+        if (filterType === 'provider') {
+            locatorForTextInFilterList = c.selectedItemInList.replace('$index', 1);
+            locatorForTextInReport = c.providerInReport;            
+        }
+        else if (filterType === 'reason code') {
+            locatorForTextInFilterList = c.selectedItemInList.replace('$index', 3);
+            locatorForTextInReport = c.reasonCodeInReport;
+        }                    
+        let selectedTextInFilter = await I.grabTextFrom(locatorForTextInFilterList);
+        let textInReport = await I.grabTextFrom(locatorForTextInReport);        
+
+        // sometimes if the text is too long, the text can have a '<br>' in it
+        selectedTextInFilter = textFromHtml(selectedTextInFilter);
+        textInReport = textFromHtml(textInReport);
+               
+        if (filterType === 'provider')
+            console.log(`Selected provider in filter is ${selectedTextInFilter} and the provider that appears in the report is ${textInReport}`);        
+        else
+            console.log(`Selected reason code in filter is ${selectedTextInFilter} and the reason code that appears in the report is ${textInReport}`);        
+       
+    },
+
+    waitForContentToLoad() {
+        I.waitForInvisible(c.loadingMsg, c.waitTime);
+        I.wait(2);
     },
 
     wait() {

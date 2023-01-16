@@ -22,19 +22,23 @@ Then('I see the title {string} in maximized tile and the data in a graph', (titl
     p.verifyTileMaximizedFor(title);
 }); 
 
-Then('I click the provider filter button All to see all providers selected', () => {
-    p.selectProviderFilterButton('All');
+Then('I click the filter button All to see all options selected', () => {
+    p.selectFilterButton('All');
 });
 
-Then('I click the provider filter button None to see all providers deselected', () => {
-    p.selectProviderFilterButton('Deselect');
+Then('I click the filter button None to see all options deselected', () => {
+    p.selectFilterButton('Deselect');
 });
 
 Then('I click on the provider filter button Invert to see the provider selection is inverted', () => {
-    p.selectProviderFilterButton('Invert');
+    p.selectFilterButton('Invert');
 });
 
 Then('I click on a single provider to see that provider selected', () => {
+    p.selectOneProvider();
+});
+
+Then('I click on the reason code to see that reason code selected', () => {
     p.selectOneProvider();
 });
 
@@ -60,21 +64,27 @@ Then('I click on Reset to clear the filters and click Apply to see the initial d
     p.apply();
 });
 
-Then('I click on the legend Late Visits', () => {
-    p.clickLegendLateVisits();
+Then('I click on the legend {string}', (legend) => {
+    if (legend === 'Variance')
+        p.clickLegendVariance();
+    else 
+        p.clickLegendLateVisits();
 });
 
-Then('I click on the legend Variance', () => {
-    p.clickLegendVariance();
-});
 
-Then('I click Apply', () => {
-    p.apply();
-});
+Then('I click Apply', () => { p.apply(); });
 
 Then('I select a valid date range and click Apply to see the graph', () => {
     p.selectDates();
     p.apply();
+});
+
+Then('I set {string} as the start date', (date) => {
+    p.setStartDate(date);
+});
+
+Then('I set {string} as the end date', (date) => {
+    p.setEndDate(date);
 });
 
 Then('I click any bar on the graph to see data for that item', () => p.clickItemInBarGraph());
@@ -83,8 +93,8 @@ Then('I click on the first bar of the chart in {string} to see the detailed data
     p.clickOnGraphToSee(activityDataPage);
 });
 
-Then('I see the {string} filter set to the {string} clicked in the graph', () => {
-    // currently not possible to do any test. Only visual verification
+Then('I see the {string} filter set to the {string} clicked in the graph', async (filterType) => {    
+    p.verifySelectedItemInFilterMatchesThatInReport(filterType);
 });
 
 Then('I search for a known {string} in the {string} list search box', async () => {
@@ -99,8 +109,22 @@ Then('I click anywhere on the graph to see {string}', (activityDataPage) => {
     p.clickOnGraphToSee(activityDataPage);
 });
 
+Then('I click on the pie chart', () => { 
+    p.clickPieChartWedge(); 
+    p.waitForContentToLoad();
+});
+
+Then('I click on the bar graph', () => { 
+    p.clickItemInBarGraph(); 
+    p.waitForContentToLoad();
+});
+
 Then('I click on Export to see PDF, Excel, XSLX export options', () => {
     p.clickExportToSeeExportOptions();
+});
+
+Then('I click on each of the {string} legends to see the graph change if applicable', (numberOfLegendsInSet) => {
+    p.clickEachLegendInSet(numberOfLegendsInSet);
 });
 
 When('I click on a few legend items in the preview graph in the {string} tile', (tileName) => {
@@ -108,3 +132,11 @@ When('I click on a few legend items in the preview graph in the {string} tile', 
 });
 
 Then('I see the graph change as per the selection', () => { p.wait(); });
+
+Then('I see the detailed report with the following columns', (table) => {
+    let rows = table.parse().hashes();    
+    p.waitForContentToLoad();        
+    rows.forEach(row => {
+       p.verifyColumn(row.No, row.Name);                     
+    });    
+});

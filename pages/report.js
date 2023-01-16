@@ -52,13 +52,13 @@ module.exports = {
         I.wait(1);
         I.click(c.datepickerCloseBtn);       
     },
-
+/*
     apply() {
         I.click(c.applyBtn);
         I.waitForInvisible(c.loadingMsg, c.waitTime);
         I.wait(2);
     },
-
+*/
     reset() {
         I.click(c.resetBtn);
         I.wait(2);
