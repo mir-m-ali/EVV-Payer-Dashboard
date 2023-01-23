@@ -101,9 +101,9 @@ Then('I search for a known {string} in the {string} list search box', async () =
     await p.searchForKnownProviderOrCode();
 });
 
-Then('I see the {string} in the {string} list', () => {
-    console.log('...');
-});
+Then('I see the {string} in the {string} list', () => {});
+
+Then('I select the {string}', (item) => { p.selectItemInList(item); });
 
 Then('I click anywhere on the graph to see {string}', (activityDataPage) => {
     p.clickOnGraphToSee(activityDataPage);

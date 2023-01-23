@@ -2,6 +2,7 @@ const { I } = inject();
 
 const c = {
     waitTime: 160,
+    logo: '//div[@class="evv-nav-logo"]',
     controlsLabel: '//span[contains(text(), "Control")]',    
     barCharts: ['missed visits by provider', 'late visits by provider'], // hack for now...need to come up with something better
     dashboardBtn: '//button[contains(@mattooltip,"Payer Dashboard")]',
@@ -73,12 +74,12 @@ function clickOnGraph(baseGraph, isBarGraph) {
     I.click(chart);
 }
 
-function textFromHtml(htmlText) {    
-    return !htmlText ? '' : htmlText.trim().replace(/<br\/?>|(&nbsp;)|(&amp;)/gi,'').replace(/\s{2,}/g, ' ');
+
+function removeLinebreaks(htmlText) {        
+    //return !htmlText ? '' : htmlText.trim().replace(/<br\/?>|(&nbsp;)|(&amp;)/gi,'').replace(/\s{2,}/g, ' ');
+    return !htmlText ? '' : htmlText.replace(/\s{2,}/g, ' ').replace(/\r?\n|\r/g,' ').trim();
 }
-
  
-
 module.exports = {
     
      clickOnDashboardButton() {
@@ -222,6 +223,12 @@ module.exports = {
         I.wait(2);
     },
 
+    selectItemInList(item) {
+        if (item === 'provider')
+            I.click(c.lastProvider);
+        I.wait(2);
+    },
+
     async searchForKnownProviderOrCode() {
          // for now just grabbing the last provider in the list
         I.waitForVisible(c.lastProvider, c.waitTime);       
@@ -273,7 +280,7 @@ module.exports = {
         I.wait(3);
         I.waitForVisible(c.pdfBtn);
         I.waitForVisible(c.excelBtn);
-        I.waitForVisible(c.xlsxBtn);
+        I.waitForVisible(c.xlsxBtn);        
     },
 
     clickFirstAndLastLegend(tileName) {
@@ -313,17 +320,9 @@ module.exports = {
             locatorForTextInReport = c.reasonCodeInReport;
         }                    
         let selectedTextInFilter = await I.grabTextFrom(locatorForTextInFilterList);
-        let textInReport = await I.grabTextFrom(locatorForTextInReport);        
-
-        // sometimes if the text is too long, the text can have a '<br>' in it
-        selectedTextInFilter = textFromHtml(selectedTextInFilter);
-        textInReport = textFromHtml(textInReport);
-               
-        if (filterType === 'provider')
-            console.log(`Selected provider in filter is ${selectedTextInFilter} and the provider that appears in the report is ${textInReport}`);        
-        else
-            console.log(`Selected reason code in filter is ${selectedTextInFilter} and the reason code that appears in the report is ${textInReport}`);        
-       
+        let textInReport = await I.grabTextFrom(locatorForTextInReport);      
+        selectedTextInFilter = removeLinebreaks(selectedTextInFilter);        
+        textInReport = removeLinebreaks(textInReport);
     },
 
     waitForContentToLoad() {

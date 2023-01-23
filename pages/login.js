@@ -14,10 +14,10 @@ module.exports = {
         I.amOnPage('/');        
         I.wait(2);
         //console.log(process.env.USERNAME, process.env.PASSWORD);
-        //I.fillField('//input[@id="username"]', process.env.USERNAME);
-        //I.fillField('//input[@id="password"]', process.env.PASSWORD);
-        I.fillField('//input[@id="username"]', 'mali');
-        I.fillField('//input[@id="password"]', 'Password!123');
+        I.fillField('//input[@id="username"]', process.env.USERNAME);
+        I.fillField('//input[@id="password"]', process.env.PASSWORD);
+        //I.fillField('//input[@id="username"]', 'mali');
+        //I.fillField('//input[@id="password"]', 'Password!123');
         I.click('//button[@id="kc-login"]');        
         I.waitForVisible('//span[contains(text(),"Dashboard")]', waitTime);  
         I.executeScript(() => {            
